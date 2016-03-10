@@ -1,0 +1,7 @@
+New log file opened at Thu Mar 10 15:25:46 GMT 2016 by 3100@JSMITH-WPC
+Taking next connection to: 57091
+New client attempting to connect on port: 57093-57091
+  Address = /192.168.56.1:57091
+This client on port 57093 has uuid a40201af-1c7d-4e52-86e1-4031cc96e5a7 configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
+Connected Clients: play-fork-run-a40201af-1c7d-4e52-86e1-4031cc96e5a7
+Taking next connection to: 57091

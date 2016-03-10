@@ -1,0 +1,30 @@
+@(title: String)
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>@title</title>
+
+
+    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
+    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.js"))'></script>
+    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.fullPath("react", "react.js"))'></script>
+    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("JSXTransformer.js"))'></script>
+    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("marked.js"))'></script>
+    <script type='text/javascript' src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"> </script>
+    <script type='text/javascript' src="//cdn.jsdelivr.net/refluxjs/0.4.0/reflux.min.js"> </script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+
+
+
+</head>
+<body>
+<div id="example"></div>
+<div class="app"></div>
+
+
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/books.js")'> </script>
+
+</body>
+</html>
