@@ -17,7 +17,16 @@ object StatementCellType extends Enumeration {
 
 object AnalysisCategoryType extends Enumeration {
   type AnalysisCategoryType = Value
-  val Travel, Food, Bills, GoingOut, GeneralExpense, MoneyIn, Childcare, Savings, None = Value
+  val Travel= Value("Travel")
+  val Food = Value("Food")
+  val Bills = Value("Bills")
+  val GoingOut = Value("Going Out")
+  val GeneralExpense = Value("General Expense")
+  val MoneyIn = Value("Money In")
+  val Childcare = Value("Childcare")
+  val Savings = Value("Savings")
+  val StandingOrder = Value("Standing Order")
+  val None = Value("Unknown")
 }
 
 object DebitType extends Enumeration {

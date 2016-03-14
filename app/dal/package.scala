@@ -1,8 +1,10 @@
 package uk.co.finanlysis.dal
 
+import uk.co.finanlysis.MonthlyStatementAnalysis
+
 
 object DataModel {
 
-  var StatementMap:Map[String, Double] = Map()
+  var MonthlyAnalysis:MonthlyStatementAnalysis = new MonthlyStatementAnalysis
 
 }

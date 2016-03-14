@@ -1,44 +1,68 @@
 
 var DataStore = Reflux.createStore({
+
   init: function () {
     this.data = {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      series: [
-        [5, 4, 3, 7, 5, 10, 3, 4, 8, 10, 6, 8],
-        [3, 2, 9, 5, 4, 6, 4, 6, 7, 8, 7, 4]
-      ]
+      labels: [],
+      series: []
     };
-
+    this.monthData = [];
+    this.catLabels = [];
     this.trigger();
   },
 
-  // Change data - for example purposes only
+   getLabels: function(statementData) {
+        var foundlabels = [];
+        for(var labelIndex in statementData["categories"])
+        {
+            foundlabels.push(statementData["categories"][labelIndex])
+        }
+        return foundlabels;
+    },
+
+   extractDataForMonth: function(monthData) {
+        var data = [];
+        for (var categoryKey in monthData["categories"]) {
+            data.push(monthData["categories"][categoryKey]["amount"]);
+        }
+        return data;
+    },
+
+    getMonthName: function(monthData) {
+        return monthData["month"]
+    },
+
+
+    getDataSeries: function(statementData) {
+       var data = [];
+       for(var monthIndex in statementData["analysis"]){
+           var month = this.getMonthName(statementData["analysis"][monthIndex])
+           data[month] = {name:month, data: this.extractDataForMonth(statementData["analysis"][monthIndex])};
+       }
+       return data;
+   },
+
+   copyArray: function(arrayToCopy) {
+        var newArray = []
+        var count = 0;
+        for(var key in arrayToCopy){
+           newArray[count] = arrayToCopy[key];
+           count++;
+        }
+        return newArray;
+   },
+
   updateData: function (newData) {
-
-
-   var pairs = [];
-   var labels = [];
-   var series = [];
-   var series1 = [];
-   var thedata = [];
-   for(var key in newData){
-        pairs.push(<p>{key}: {newData[key]}</p>);
-        labels.push(key);
-        series1.push(newData[key]);
-   }
-   series.push(series1);
-   thedata = {labels, series};
-   this.print();
-   this.data = thedata;
-   this.print()
-   this.trigger();
+  console.log(newData);
+    var series = this.copyArray(this.getDataSeries(newData));
+    var labels = this.getLabels(newData);
+    this.data = {labels, series};
+    this.trigger();
   },
 
-
-
   print: function() {
-  console.log("DataStore:");
-  console.log(this.data);
+    console.log("DataStore:");
+    console.log(this.data);
   }
 
 
@@ -55,10 +79,8 @@ var MyComponent = React.createClass({
       url: "http://localhost:9000/statement",
       dataType: 'json',
       success: function(data) {
-        DataStore.print();
-        console.log("statement received:");
-        console.log(data);
         DataStore.updateData(data);
+        DataStore.print();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -69,7 +91,8 @@ var MyComponent = React.createClass({
   render: function() {
    return (
     <div>
-        Hello {this.props.name},
+        {this.props.name}
+
        <Statement data={this.state.books}/>
    </div>)
    }
@@ -108,15 +131,6 @@ var ReactChart = React.createClass({
   }
 });
 
-var App = React.createClass({
-  render: function () {
-    return (
-      <ReactChart data={somedata} />
-    );
-  }
-});
 
 
-
-React.render(<MyComponent name="you!"/>, document.getElementById('example'));
-//React.render(<App />, document.querySelector('.app'));
+React.render(<MyComponent name="Finalysis"/>, document.getElementById('example'));

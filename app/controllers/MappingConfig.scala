@@ -1,5 +1,6 @@
 package uk.co.finanlysis
 
+import uk.co.finanlysis.AnalysisCategoryType.AnalysisCategoryType
 import uk.co.finanlysis.StatementCellType.StatementCellType
 import com.typesafe.config.{ConfigObject, ConfigValue, ConfigFactory, Config}
 import scala.collection.JavaConverters._
@@ -77,13 +78,18 @@ class Mapping(index:Int, mapType: StatementCellType) {
 case class CategoryMapping(config: Config) {
   val categoryMap : scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty[String, String]
 
-  addMap("travel")
-  addMap("food")
-  addMap("bills")
-  addMap("standingOrders")
-  addMap("goingOut")
+  AnalysisCategoryType.values.foreach(v => addMap(v.toString.trim.replace(" ", "").toLowerCase))
 
-  def addMap(categoryName: String) = config.getStringList("type-mappings."+ categoryName).toArray.map(x => x.toString).foreach(categoryMap+= _ -> categoryName)
+  def addMap(categoryName: String) = {
+    try {
+      config.getStringList("type-mappings." + categoryName).toArray.map(x => x.toString).foreach(categoryMap += _ -> categoryName)
+    }
+    catch {
+      case e: Throwable => {
+        FinanalysisLogger.error(e.getMessage)
+      }
+    }
+  }
 
 }
 

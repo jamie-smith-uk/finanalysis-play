@@ -8,18 +8,17 @@ import scala.collection.JavaConversions._
 object Finanalysis {
 
 
-  def start(file: File): Map[String, Double] = {
+  def start(file: File): MonthlyStatementAnalysis = {
 
     try {
       val statement = ExcelReader.createStatement(file)
-      StatementAnalyser.analysisForMonth(statement, 1)
-      //FinanalysisConfig.monthsToAnalayse.foreach(x => ExcelWriter.writeMonthlyStatementAnalysis(StatementAnalyser.analysisForMonth(statement, x), x))
+      StatementAnalyser.analyseStatement(statement)
     }
     catch {
       case e: Throwable => {
         FinanalysisLogger.error(e.getMessage)
         e.printStackTrace()
-        Map("" -> 0.00)
+        new MonthlyStatementAnalysis()
       }
     } finally {
 
