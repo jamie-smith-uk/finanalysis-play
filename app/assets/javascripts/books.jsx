@@ -13,17 +13,17 @@ var DataStore = Reflux.createStore({
 
    getLabels: function(statementData) {
         var foundlabels = [];
-        for(var labelIndex in statementData["categories"])
+        for(var labelIndex in statementData)
         {
-            foundlabels.push(statementData["categories"][labelIndex])
+            foundlabels.push(statementData[labelIndex]["category"])
         }
         return foundlabels;
     },
 
    extractDataForMonth: function(monthData) {
         var data = [];
-        for (var categoryKey in monthData["categories"]) {
-            data.push(monthData["categories"][categoryKey]["amount"]);
+        for (var categoryKey in monthData) {
+            data.push(monthData[categoryKey]["amount"]);
         }
         return data;
     },
@@ -35,9 +35,9 @@ var DataStore = Reflux.createStore({
 
     getDataSeries: function(statementData) {
        var data = [];
-       for(var monthIndex in statementData["analysis"]){
-           var month = this.getMonthName(statementData["analysis"][monthIndex])
-           data[month] = {name:month, data: this.extractDataForMonth(statementData["analysis"][monthIndex])};
+       for(var monthIndex in statementData){
+           var month = "month";
+           data[month] = {name:month, data: this.extractDataForMonth(statementData)};
        }
        return data;
    },
@@ -53,7 +53,7 @@ var DataStore = Reflux.createStore({
    },
 
   updateData: function (newData) {
-  console.log(newData);
+    console.log(newData);
     var series = this.copyArray(this.getDataSeries(newData));
     var labels = this.getLabels(newData);
     this.data = {labels, series};
