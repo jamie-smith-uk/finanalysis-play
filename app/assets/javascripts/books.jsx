@@ -64,40 +64,133 @@ var DataStore = Reflux.createStore({
     console.log("DataStore:");
     console.log(this.data);
   }
-
-
 });
+
+
+var MonthSelector = React.createClass({
+
+  getInitialState:function(){
+      return {selectValue:'January'};
+  },
+
+  handleChange:function(e){
+    this.setState({selectValue:e.target.value});
+    console.log("Data Change " + e.target.value)
+  },
+
+  render: function() {
+
+    return (
+      <div>
+      <select
+        value={this.state.selectValue}
+        onChange={this.handleChange}
+      >
+       <option value="1">January</option>
+        <option value="2">February</option>
+      </select>
+      </div>
+    );
+  }
+})
 
 var MyComponent = React.createClass({
 
     getInitialState: function() {
-        return { books: [] };
+        return { books: [], selectMonthValue:'1', selectYearValue:'2016'};
     },
 
   componentDidMount: function() {
-    $.ajax({
-      url: "http://localhost:9000/statement",
-      dataType: 'json',
-      success: function(data) {
-        DataStore.updateData(data);
-        DataStore.print();
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
+    this.update(this.state.selectMonthValue, this.state.selectYearValue);
+  },
+
+  update: function(month, year) {
+      $.ajax({
+        url: "http://localhost:9000/monthStatement/" + month + "/" + year,
+        dataType: 'json',
+        success: function(data) {
+          DataStore.updateData(data);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this)
+      });
+  },
+
+  updateCategory: function(category) {
+        $.ajax({
+          url: "http://localhost:9000/categoryStatement/" + category,
+          dataType: 'json',
+          success: function(data) {
+            DataStore.updateData(data);
+          }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+          }.bind(this)
+        });
+    },
+
+  handleStateUpdate: function() {
+    this.update(this.state.selectMonthValue, this.state.selectYearValue);
+  },
+
+  handleMonthChange:function(e){
+      this.setState({selectMonthValue:e.target.value}, this.handleStateUpdate);
+  },
+
+  handleYearChange:function(e){
+      this.setState({selectYearValue:e.target.value}, this.handleStateUpdate);
+  },
+
+  handleCategoryChange:function(e){
+      this.updateCategory(e.target.value);
   },
 
   render: function() {
    return (
     <div>
-        {this.props.name}
+        <p>{this.props.name}</p>
+        <p>
+         <select value={this.state.selectMonthValue} onChange={this.handleMonthChange} >
+                       <option value="1">January</option>
+                       <option value="2">February</option>
+                       <option value="3">March</option>
+                       <option value="4">April</option>
+                       <option value="5">May</option>
+                       <option value="6">June</option>
+                       <option value="7">July</option>
+                       <option value="8">August</option>
+                       <option value="9">September</option>
+                       <option value="10">October</option>
+                       <option value="11">November</option>
+                       <option value="12">December</option>
+         </select>
+         <select value={this.state.selectYearValue} onChange={this.handleYearChange} >
+                        <option value="2015">2015</option>
+                        <option value="2016">2016</option>
+         </select>
+        </p>
 
-       <Statement data={this.state.books}/>
+        <p>
+         <select onChange={this.handleCategoryChange} >
+                    <option value="Travel">Travel</option>
+                    <option value="Food">Food</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Going Out">Going Out</option>
+                    <option value="General Expense">Expenses</option>
+                    <option value="Money In">Money In</option>
+                    <option value="Childcare">Childcare</option>
+                    <option value="Savings">Savings</option>
+                    <option value="Standing Order">Standing Order</option>
+         </select>
+         </p>
+
+         <Statement data={this.state.books}/>
    </div>)
    }
 })
 
+var lineChartOptions = {};
 
 var Statement = React.createClass({
  mixins: [
@@ -105,8 +198,7 @@ var Statement = React.createClass({
   ],
     render : function() {
        return (
-             <ReactChart data={DataStore.data} />
-
+             <ReactChart data={DataStore.data} options={lineChartOptions}/>
        );
     }
 })

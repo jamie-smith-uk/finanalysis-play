@@ -45,7 +45,7 @@ class StatementReaderTest  extends FunSuite{
 
   test ("Exception thrown when file does not exist") {
     val thrown = intercept[FileNotFoundException] {
-      excelReader.translateStatement
+      excelReader.extractStatements
     }
   }
 
@@ -54,7 +54,7 @@ class StatementReaderTest  extends FunSuite{
     testFile = new File("test\\resources\\test-files\\valid-file-single-row.xlsx")
     excelReader = new StatementReader(testFile, mockConfig)
     mockConfig.returnNone = true
-    val statementList = excelReader.translateStatement.toList
+    val statementList = excelReader.extractStatements.toList
     assert(statementList.length == 1
       && statementList(0).amount == 0.00
       && statementList(0).description == ""
@@ -66,7 +66,7 @@ class StatementReaderTest  extends FunSuite{
 
     testFile = new File("test\\resources\\test-files\\valid-file-single-row.xlsx")
     excelReader = new StatementReader(testFile, mockConfig)
-    val statementList = excelReader.translateStatement.toList
+    val statementList = excelReader.extractStatements.toList
     assert(statementList.length == 1
       && statementList(0).amount == 0.00
       && statementList(0).description == ""
@@ -78,7 +78,7 @@ class StatementReaderTest  extends FunSuite{
     testFile = new File("test\\resources\\test-files\\valid-file-single-row.xlsx")
     mockConfig.resetMapping(0,1,2,3)
     excelReader = new StatementReader(testFile, mockConfig)
-    val statementList = excelReader.translateStatement.toList
+    val statementList = excelReader.extractStatements.toList
     assert(statementList.length == 1
       && statementList(0).amount == 5.99
       && statementList(0).description == "WOODGRANGE"
@@ -90,7 +90,7 @@ class StatementReaderTest  extends FunSuite{
     testFile = new File("test\\resources\\test-files\\valid-file-multiple-rows.xlsx")
     mockConfig.resetMapping(0,1,2,3)
     excelReader = new StatementReader(testFile, mockConfig)
-    val statementList = excelReader.translateStatement.toList
+    val statementList = excelReader.extractStatements.toList
     assert(statementList.length == 2
       && statementList(0).amount == 5.99
       && statementList(0).description == "WOODGRANGE"

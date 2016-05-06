@@ -1,5 +1,7 @@
 package finanalysis.controllers
 
+import java.time.Year
+
 import finanalysis.models.{AnalysisCategoryType, StatementInfoType}
 import AnalysisCategoryType.AnalysisCategoryType
 import StatementInfoType.StatementCellType
@@ -15,35 +17,77 @@ object FinanalysisConfig{
   val categoryMapping = new FinanalysisCategoryMapping(config)
   var monthsToAnalayse = config.getIntList("months-to-analyse").asScala
 
-  val monthNames:Map[String, Int] = Map (
-    "JAN" -> 1,
-    "FEB" -> 2,
-    "MAR" -> 3,
-    "APR" -> 4,
-    "MAY" -> 5,
-    "JUN" -> 6,
-    "JUL" -> 7,
-    "AUG" -> 8,
-    "SEP" -> 9,
-    "OCT" -> 10,
-    "NOV" -> 11,
-    "DEV" -> 12
-  )
-  
-  val monthNumbers:Map[Int, String] = Map (
-    1 -> "January",
-    2 -> "February",
-    3 -> "March",
-    4 -> "April",
-    5 -> "May",
-    6 -> "June",
-    7 -> "July",
-    8 -> "August",
-    9 -> "September",
-    10 -> "October",
-    11 -> "November",
-    12 -> "December"
-  )
+}
+
+object Month {
+
+  private val currentMonth  = java.time.LocalDate.now().getMonth.getValue
+  private val currentYear = Year.now().getValue
+
+  def toName(month: Int): String = {
+    month match {
+      case 1 => "January"
+      case 2 => "February"
+      case 3 => "March"
+      case 4 => "April"
+      case 5 => "May"
+      case 6 => "June"
+      case 7 => "July"
+      case 8 => "August"
+      case 9 => "September"
+      case 10 => "October"
+      case 11 => "November"
+      case 12 => "December"
+    }
+  }
+
+  def toInt(month: String): Int ={
+    month.toLowerCase match {
+
+      case "january" | "jan" => 1
+      case "february" | "feb" => 2
+      case "march" | "mar" => 3
+      case "april" | "apr" => 4
+      case "may" => 5
+      case "june" | "jun" => 6
+      case "july" | "jul" => 7
+      case "august" | "aug" => 8
+      case "september" | "sep" => 9
+      case "october" | "oct" => 10
+      case "november" | "nov" => 11
+      case "december" | "dec" => 12
+    }
+  }
+
+   private def padMonth(month: Int) : String = {
+     if(month<10) "0" + month else month.toString
+   }
+
+  def comparisonInt(month: String) : Int = {
+
+    if (this.toInt(month) > currentMonth)
+      ((currentYear-1).toString +  padMonth(this.toInt(month))).toInt
+    else
+      (currentYear.toString +  padMonth(this.toInt(month))).toInt
+  }
+
+  def months : List[String] = {
+    List(
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    )
+  }
+
 }
 
 trait MappingConfig {

@@ -4,11 +4,10 @@
 
 # Home page
 GET     /                                   finanalysis.controllers.FinanalysisController.index
-GET     /param/:num                         finanalysis.controllers.FinanalysisController.showparam(num: Int)
-GET     /list/:name                         finanalysis.controllers.FinanalysisController.listofthings(name: String)
-POST    /                                   finanalysis.controllers.FinanalysisController.upload
+POST    /upload                             finanalysis.controllers.FinanalysisController.upload
 GET     /react                              finanalysis.controllers.FinanalysisController.react
-GET     /statement                          finanalysis.controllers.FinanalysisController.statement
+GET     /monthStatement/:month/:year              finanalysis.controllers.FinanalysisController.monthStatement(month: Int, year: Int)
+GET     /categoryStatement/:category        finanalysis.controllers.FinanalysisController.categoryStatement(category: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

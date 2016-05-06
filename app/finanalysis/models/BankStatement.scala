@@ -27,54 +27,15 @@ object AnalysisCategoryType extends Enumeration {
 
 object DebitType extends Enumeration {
   type DebitType = Value
-  val PointOfSale, DirectDebit, CashMachine, StandingOrder, FinanceChange, Interest, BACSPayment, DirectPayment, InternationalTransfer, None = Value
-
-  def convertToDebitType(x : String):DebitType = {
-    x match {
-      case "POS" => DebitType.PointOfSale
-      case "D/D" => DebitType.DirectDebit
-      case "C/L" => DebitType.CashMachine
-      case "S/O" => DebitType.StandingOrder
-      case "CHG" => DebitType.FinanceChange
-      case "INT" => DebitType.Interest
-      case "BAC" => DebitType.BACSPayment
-      case "DPC" => DebitType.DirectPayment
-      case "ITL" => DebitType.InternationalTransfer
-      case _ => DebitType.None
-    }
-  }
-}
-
-class BankStatementEntry {
-
-  var description: String = ""
-  var amount: Double = 0.00
-  var debitType: DebitType = DebitType.None
-  var date: Date = Calendar.getInstance.getTime
-
-  def update(infoValue: A forSome {type A}, infoType: StatementCellType) = {
-
-    infoType match {
-      case StatementInfoType.Description => {
-        if(debitType == DebitType.PointOfSale)
-          description = infoValue.toString.split(",")(1).trim
-        else
-          description = infoValue.toString
-      }
-      case StatementInfoType.Amount => amount = math.abs(infoValue.asInstanceOf[Double])
-      case StatementInfoType.Type => debitType = DebitType.convertToDebitType(infoValue.toString)
-      case StatementInfoType.Date => date = infoValue.asInstanceOf[Date]
-      case _ => FinanalysisLogger.error("Map incorrectly requested for: " + infoValue + ", for type: " + infoType.toString)
-    }
-  }
-}
-
-class BankStatement {
-  private var entries = ArrayBuffer.empty[BankStatementEntry]
-
-  def add(bankStatementEntry: BankStatementEntry) = {
-    entries.+=(bankStatementEntry)
-  }
-
-  def toList = entries.toList
+  val PointOfSale = Value("POS")
+  val DirectDebit = Value("D/D")
+  val CashMachine  = Value("C/L")
+  val StandingOrder = Value("S/O")
+  val FinanceChange = Value("CHG")
+  val Interest = Value("INT")
+  val BACSPayment = Value("BAC")
+  val DirectPayment = Value("DPC")
+  val InternationalTransfer = Value("ITL")
+  val internationalPayment = Value("IBP")
+  val None = Value("")
 }

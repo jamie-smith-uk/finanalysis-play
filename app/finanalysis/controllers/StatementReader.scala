@@ -2,8 +2,9 @@ package finanalysis.controllers
 
 import java.io.{File, FileInputStream}
 import java.util.{Date, Calendar}
-import javax.inject.Inject
 import finanalysis.dal.{StatementDAO, Statement}
+import finanalysis.models.AnalysisCategoryType
+import finanalysis.models.AnalysisCategoryType._
 import finanalysis.models.DebitType.DebitType
 import finanalysis.models._
 import org.apache.poi.ss.usermodel.{Cell, WorkbookFactory, Row}
@@ -18,39 +19,22 @@ class StatementReader(bankExportFile: File, statementDAO: StatementDAO,  mapping
   private val cellMapping = mapping
   private val file:File = bankExportFile
 
-  def translateStatement : BankStatement = {
+  def extractStatements = {
     val sheet = WorkbookFactory.create(new FileInputStream(file.getPath)).getSheetAt(0)
-    val statement = new BankStatement
     sheet.rowIterator.foreach(r => {
-      val bankStatementEntry = translateRow(r)
-
-      if (bankStatementEntry.isDefined) {
-
-        statement.add(bankStatementEntry.get)
-
-        val fut: Future[Unit] = statementDAO.insert(
-          new Statement(
-            new java.sql.Date(bankStatementEntry.get.date.getTime),
-            bankStatementEntry.get.debitType.toString,
-            bankStatementEntry.get.description,
-            bankStatementEntry.get.amount,
-            Some(StatementAnalyser.mapCategory(bankStatementEntry.get).toString)
-          )
-        )
-
+      val statement = translateRow(r)
+      if (statement.isDefined) {
+        val fut: Future[Unit] = statementDAO.insert(statement.get)
         fut onFailure {
           case e => FinanalysisLogger.error("Future failed. " + e.getMessage)
         }
-
-
       }
     })
-    statement
   }
 
-  def translateRow( row: Row ): Option[BankStatementEntry] = {
+  def translateRow( row: Row ): Option[Statement] = {
     if (row.getRowNum > 1) {
-      val entry = new BankStatementEntry
+
       var desc: String = ""
       var amount: Double = 0.00
       var debitType: DebitType = DebitType.None
@@ -59,8 +43,6 @@ class StatementReader(bankExportFile: File, statementDAO: StatementDAO,  mapping
       row.cellIterator.foreach(c => {
         val cellInfo: Option[(Any, StatementCellType)] = translateCell(c)
         if (cellInfo.isDefined) {
-          entry.update(cellInfo.get._1, cellInfo.get._2)
-
           cellInfo.get._2 match {
             case StatementInfoType.Description => {
               if (debitType == DebitType.PointOfSale)
@@ -69,39 +51,52 @@ class StatementReader(bankExportFile: File, statementDAO: StatementDAO,  mapping
                 desc = cellInfo.get._1.toString
             }
             case StatementInfoType.Amount => amount = math.abs(cellInfo.get._1.asInstanceOf[Double])
-            case StatementInfoType.Type => debitType = DebitType.convertToDebitType(cellInfo.get._1.toString)
+            case StatementInfoType.Type => debitType = DebitType withName (cellInfo.get._1.toString)
             case StatementInfoType.Date => date = cellInfo.get._1.asInstanceOf[Date]
-            case _ => FinanalysisLogger.error("Map incorrectly requested for: " + cellInfo.get._1 + ", for type: " + cellInfo.get._2.toString)
           }
         }
         else
           None
       })
-      val statement = new Statement(new java.sql.Date(date.getTime),debitType.toString, desc, amount)
-      Some(entry)
+      Some(new Statement(new java.sql.Date(date.getTime),debitType.toString, desc, amount, Some(mapCategory(debitType, desc).toString)))
     }
     else
-      None
+      scala.None
   }
 
-  /*
-   infoType match {
-      case StatementInfoType.Description => {
-        if(debitType == DebitType.PointOfSale)
-          desc = infoValue.toString.split(",")(1).trim
-        else
-          desc = infoValue.toString
+  def mapCategory (statementDebitType: DebitType, statementDesc: String): AnalysisCategoryType = {
+    statementDebitType match {
+      case DebitType.PointOfSale => {
+        val analysisCategory = getMatchingCategory(statementDesc)
+        analysisCategory.getOrElse(AnalysisCategoryType.GeneralExpense)
       }
-      case StatementInfoType.Amount => amount = math.abs(infoValue.asInstanceOf[Double])
-      case StatementInfoType.Type => debitType = DebitType.convertToDebitType(infoValue.toString)
-      case StatementInfoType.Date => date = infoValue.asInstanceOf[Date]
-      case _ => FinanalysisLogger.error("Map incorrectly requested for: " + infoValue + ", for type: " + infoType.toString)
+      case DebitType.StandingOrder => {
+        val analysisCategory = getMatchingCategory(statementDesc)
+        analysisCategory.getOrElse(AnalysisCategoryType.Savings)
+      }
+      case DebitType.DirectDebit => AnalysisCategoryType.Bills
+      case DebitType.CashMachine => AnalysisCategoryType.GeneralExpense
+      case DebitType.BACSPayment | DebitType.InternationalTransfer => AnalysisCategoryType.MoneyIn
+      case _ => AnalysisCategoryType.None
     }
-   */
+  }
+
+  private def getMatchingCategory(description: String) : Option[AnalysisCategoryType] = {
+    var category:Option[AnalysisCategoryType] = scala.None
+    for ((key, value) <- FinanalysisConfig.categoryMapping.CategoryMap) {
+      if (description.toLowerCase.contains(key.toLowerCase)) {
+        AnalysisCategoryType.values.foreach(x => {
+          if(x.toString.trim.replace(" ", "").toLowerCase == value)
+            category = Some(x)
+        })
+      }
+    }
+    category
+  }
 
   def translateCell(cell: Cell): Option[(Any, StatementCellType)] = {
     val mapping:Option[Mapping] = cellMapping.mappingAtIndex(cell.getColumnIndex)
-    if (mapping.isDefined) Some(getData(cell), mapping.get.mappingType) else None
+    if (mapping.isDefined) Some(getData(cell), mapping.get.mappingType) else scala.None
   }
 
   def getData(cell: Cell) = {
