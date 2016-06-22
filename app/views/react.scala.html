@@ -2,6 +2,9 @@
 <html>
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Finanlysis Monthly Statement</title>
 
 
@@ -12,16 +15,35 @@
     <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("marked.js"))'></script>
     <script type='text/javascript' src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"> </script>
     <script type='text/javascript' src="//cdn.jsdelivr.net/refluxjs/0.4.0/reflux.min.js"> </script>
+
     <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
 
 
 </head>
-<body>
-<div id="example"></div>
-<div class="app"></div>
+
+    <div class="jumbotron">
+        <div class="container">
+
+            <div id="example"></div>
+            <div id="es6example"></div>
+
+
+
+
+        </div>
+    </div>
 
 <script type='text/javascript' src='@routes.Assets.versioned("javascripts/books.js")'> </script>
-
+<script type='text/javascript' src='@routes.Assets.versioned("javascripts/StatementChart.js")'> </script>
 </body>
 </html>

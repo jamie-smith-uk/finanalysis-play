@@ -148,62 +148,64 @@ var MyComponent = React.createClass({
 
   render: function() {
    return (
-    <div>
+        <div class="container">
         <p>{this.props.name}</p>
         <p>
-         <select value={this.state.selectMonthValue} onChange={this.handleMonthChange} >
-                       <option value="1">January</option>
-                       <option value="2">February</option>
-                       <option value="3">March</option>
-                       <option value="4">April</option>
-                       <option value="5">May</option>
-                       <option value="6">June</option>
-                       <option value="7">July</option>
-                       <option value="8">August</option>
-                       <option value="9">September</option>
-                       <option value="10">October</option>
-                       <option value="11">November</option>
-                       <option value="12">December</option>
-         </select>
-         <select value={this.state.selectYearValue} onChange={this.handleYearChange} >
-                        <option value="2015">2015</option>
-                        <option value="2016">2016</option>
-         </select>
+             <select
+                value={this.state.selectMonthValue}
+                onChange={this.handleMonthChange}>
+                   <option value="1">January</option>
+                   <option value="2">February</option>
+                   <option value="3">March</option>
+                   <option value="4">April</option>
+                   <option value="5">May</option>
+                   <option value="6">June</option>
+                   <option value="7">July</option>
+                   <option value="8">August</option>
+                   <option value="9">September</option>
+                   <option value="10">October</option>
+                   <option value="11">November</option>
+                   <option value="12">December</option>
+             </select>
+
+             <select
+                value={this.state.selectYearValue}
+                onChange={this.handleYearChange}>
+                    <option value="2015">2015</option>
+                    <option value="2016">2016</option>
+             </select>
         </p>
 
         <p>
-         <select onChange={this.handleCategoryChange} >
-                    <option value="Travel">Travel</option>
-                    <option value="Food">Food</option>
-                    <option value="Bills">Bills</option>
-                    <option value="Going Out">Going Out</option>
-                    <option value="General Expense">Expenses</option>
-                    <option value="Money In">Money In</option>
-                    <option value="Childcare">Childcare</option>
-                    <option value="Savings">Savings</option>
-                    <option value="Standing Order">Standing Order</option>
-         </select>
+             <select onChange={this.handleCategoryChange}>
+                <option value="Travel">Travel</option>
+                <option value="Food">Food</option>
+                <option value="Bills">Bills</option>
+                <option value="Going Out">Going Out</option>
+                <option value="General Expense">Expenses</option>
+                <option value="Money In">Money In</option>
+                <option value="Childcare">Childcare</option>
+                <option value="Savings">Savings</option>
+                <option value="Standing Order">Standing Order</option>
+             </select>
          </p>
-
          <Statement data={this.state.books}/>
-   </div>)
+         </div>
+         )
    }
 })
 
 var lineChartOptions = {};
 
 var Statement = React.createClass({
- mixins: [
-    Reflux.connect(DataStore,'datastore')
-  ],
-    render : function() {
-       return (
-             <ReactChart data={DataStore.data} options={lineChartOptions}/>
-       );
-    }
+ mixins: [Reflux.connect(DataStore,'datastore')],
+
+ render : function() {
+    return (
+          <ReactChart data={DataStore.data} options={lineChartOptions}/>
+    );
+ }
 })
-
-
 
 
 var ReactChart = React.createClass({
@@ -222,7 +224,6 @@ var ReactChart = React.createClass({
     );
   }
 });
-
 
 
 React.render(<MyComponent name="Finalysis"/>, document.getElementById('example'));
